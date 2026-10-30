@@ -1,0 +1,56 @@
+<script type="text/javascript">
+  RED.nodes.registerType('hibira-config', {
+    category: 'config',
+    defaults: {
+      name: { value: '' },
+      host: { value: 'ws.hibira.io', required: true },
+    },
+    credentials: {
+      appId: { type: 'text', required: true },
+      key: { type: 'text', required: true },
+      secret: { type: 'password', required: true },
+      pushInstanceId: { type: 'text' },
+      pushSecretKey: { type: 'password' },
+    },
+    label: function () {
+      return this.name || 'Hibira app';
+    },
+  });
+</script>
+
+<script type="text/html" data-template-name="hibira-config">
+  <div class="form-row">
+    <label for="node-config-input-name"><i class="fa fa-tag"></i> Name</label>
+    <input type="text" id="node-config-input-name" placeholder="Hibira app" />
+  </div>
+  <div class="form-row">
+    <label for="node-config-input-appId">App ID</label>
+    <input type="text" id="node-config-input-appId" />
+  </div>
+  <div class="form-row">
+    <label for="node-config-input-key">Key</label>
+    <input type="text" id="node-config-input-key" />
+  </div>
+  <div class="form-row">
+    <label for="node-config-input-secret">Secret</label>
+    <input type="password" id="node-config-input-secret" />
+  </div>
+  <div class="form-row">
+    <label for="node-config-input-host">Host</label>
+    <input type="text" id="node-config-input-host" placeholder="ws.hibira.io" />
+  </div>
+  <div class="form-row">
+    <label for="node-config-input-pushInstanceId">Push instance</label>
+    <input type="text" id="node-config-input-pushInstanceId" placeholder="Only for push notifications" />
+  </div>
+  <div class="form-row">
+    <label for="node-config-input-pushSecretKey">Push secret key</label>
+    <input type="password" id="node-config-input-pushSecretKey" placeholder="Only for push notifications" />
+  </div>
+</script>
+
+<script type="text/html" data-help-name="hibira-config">
+  <p>A Hibira app. Hibira is a hosted realtime service that speaks the Pusher Channels and Beams protocols.</p>
+  <p>Sign up at <a href="https://hibira.io/portal" target="_blank">hibira.io</a> and create an app (the free plan is enough, no card). Copy the <b>App ID</b>, <b>Key</b> and <b>Secret</b> from the app page. For push notifications, also copy the <b>Instance ID</b> and <b>Secret Key</b> from the app's Push tab.</p>
+  <p><b>Host</b> is <code>ws.hibira.io</code> for the default cluster, or <code>ws-&lt;cluster&gt;.hibira.io</code>.</p>
+</script>

@@ -1,0 +1,52 @@
+<script type="text/javascript">
+  RED.nodes.registerType('hibira in', {
+    category: 'network',
+    color: '#F5A28A',
+    defaults: {
+      name: { value: '' },
+      app: { value: '', type: 'hibira-config', required: true },
+      channel: { value: '', required: true },
+      event: { value: '' },
+    },
+    inputs: 0,
+    outputs: 1,
+    icon: 'bridge.svg',
+    label: function () {
+      return this.name || (this.channel ? 'hibira ' + this.channel : 'hibira in');
+    },
+    paletteLabel: 'hibira in',
+  });
+</script>
+
+<script type="text/html" data-template-name="hibira in">
+  <div class="form-row">
+    <label for="node-input-app"><i class="fa fa-cloud"></i> App</label>
+    <input type="text" id="node-input-app" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-channel"><i class="fa fa-hashtag"></i> Channel</label>
+    <input type="text" id="node-input-channel" placeholder="orders, private-alerts or presence-room" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-event"><i class="fa fa-filter"></i> Event</label>
+    <input type="text" id="node-input-event" placeholder="All events" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+    <input type="text" id="node-input-name" />
+  </div>
+</script>
+
+<script type="text/html" data-help-name="hibira in">
+  <p>Subscribes to a channel over a WebSocket and outputs every event sent to it, including client events from browsers.</p>
+  <p>Private and presence channels work too: the node signs the subscription itself with the app secret. In presence channels it joins as user <code>node-red-&lt;node id&gt;</code>.</p>
+  <h3>Outputs</h3>
+  <dl class="message-properties">
+    <dt>payload <span class="property-type">object | string</span></dt>
+    <dd>The event data.</dd>
+    <dt>event <span class="property-type">string</span></dt>
+    <dd>The event name.</dd>
+    <dt>topic <span class="property-type">string</span></dt>
+    <dd>The channel.</dd>
+  </dl>
+</script>

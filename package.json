@@ -1,0 +1,51 @@
+{
+  "name": "@hibira-io/node-red-hibira",
+  "version": "0.1.0",
+  "description": "Node-RED nodes for Hibira: send and receive realtime WebSocket events (Pusher-compatible) and push notifications",
+  "homepage": "https://hibira.io",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hibira-io/node-red-hibira.git"
+  },
+  "bugs": "https://github.com/hibira-io/node-red-hibira/issues",
+  "license": "MIT",
+  "author": "Hibira",
+  "keywords": [
+    "node-red",
+    "hibira",
+    "pusher",
+    "websocket",
+    "realtime",
+    "push-notifications"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "node-red": {
+    "version": ">=3.0.0",
+    "nodes": {
+      "hibira-config": "nodes/hibira-config.js",
+      "hibira-out": "nodes/hibira-out.js",
+      "hibira-in": "nodes/hibira-in.js",
+      "hibira-push": "nodes/hibira-push.js"
+    }
+  },
+  "files": [
+    "nodes",
+    "examples",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "mocha test/*_spec.js --exit"
+  },
+  "dependencies": {
+    "pusher": "^5.3.4",
+    "pusher-js": "^8.4.0"
+  },
+  "devDependencies": {
+    "mocha": "^10.8.2",
+    "node-red": "^4.1.0",
+    "node-red-node-test-helper": "^0.3.6"
+  }
+}

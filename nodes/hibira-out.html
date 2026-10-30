@@ -1,0 +1,56 @@
+<script type="text/javascript">
+  RED.nodes.registerType('hibira out', {
+    category: 'network',
+    color: '#F5A28A',
+    defaults: {
+      name: { value: '' },
+      app: { value: '', type: 'hibira-config', required: true },
+      channel: { value: '' },
+      event: { value: '' },
+    },
+    inputs: 1,
+    outputs: 1,
+    icon: 'bridge.svg',
+    align: 'right',
+    label: function () {
+      return this.name || (this.channel ? 'hibira ' + this.channel : 'hibira out');
+    },
+    paletteLabel: 'hibira out',
+  });
+</script>
+
+<script type="text/html" data-template-name="hibira out">
+  <div class="form-row">
+    <label for="node-input-app"><i class="fa fa-cloud"></i> App</label>
+    <input type="text" id="node-input-app" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-channel"><i class="fa fa-hashtag"></i> Channel</label>
+    <input type="text" id="node-input-channel" placeholder="orders (or use msg.topic)" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-event"><i class="fa fa-bolt"></i> Event</label>
+    <input type="text" id="node-input-event" placeholder="update (or use msg.event)" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+    <input type="text" id="node-input-name" />
+  </div>
+</script>
+
+<script type="text/html" data-help-name="hibira out">
+  <p>Sends <code>msg.payload</code> as a realtime event. Every browser and app subscribed to the channel gets it at once.</p>
+  <h3>Inputs</h3>
+  <dl class="message-properties">
+    <dt>payload <span class="property-type">object | string</span></dt>
+    <dd>The event data. Objects are sent as JSON.</dd>
+    <dt class="optional">topic <span class="property-type">string</span></dt>
+    <dd>The channel, or several separated by commas, when the node has none set.</dd>
+    <dt class="optional">event <span class="property-type">string</span></dt>
+    <dd>The event name when the node has none set.</dd>
+    <dt class="optional">socketId <span class="property-type">string</span></dt>
+    <dd>A connection that should not receive the event.</dd>
+  </dl>
+  <h3>Outputs</h3>
+  <p>The same message, with <code>msg.statusCode</code> set to the API's answer.</p>
+</script>

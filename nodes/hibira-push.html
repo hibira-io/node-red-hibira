@@ -1,0 +1,74 @@
+<script type="text/javascript">
+  RED.nodes.registerType('hibira push', {
+    category: 'network',
+    color: '#F5A28A',
+    defaults: {
+      name: { value: '' },
+      app: { value: '', type: 'hibira-config', required: true },
+      target: { value: 'interests' },
+      to: { value: '' },
+      title: { value: '' },
+      body: { value: '' },
+      link: { value: '' },
+    },
+    inputs: 1,
+    outputs: 1,
+    icon: 'alert.svg',
+    align: 'right',
+    label: function () {
+      return this.name || 'hibira push';
+    },
+    paletteLabel: 'hibira push',
+  });
+</script>
+
+<script type="text/html" data-template-name="hibira push">
+  <div class="form-row">
+    <label for="node-input-app"><i class="fa fa-cloud"></i> App</label>
+    <input type="text" id="node-input-app" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-target">Send to</label>
+    <select id="node-input-target">
+      <option value="interests">Interests</option>
+      <option value="users">Users</option>
+    </select>
+  </div>
+  <div class="form-row">
+    <label for="node-input-to"><i class="fa fa-users"></i> Names</label>
+    <input type="text" id="node-input-to" placeholder="news, sports (or use msg.topic)" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-title">Title</label>
+    <input type="text" id="node-input-title" placeholder="or msg.title" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-body">Body</label>
+    <input type="text" id="node-input-body" placeholder="or msg.payload as text" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-link">Link (web)</label>
+    <input type="text" id="node-input-link" placeholder="https://..." />
+  </div>
+  <div class="form-row">
+    <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+    <input type="text" id="node-input-name" />
+  </div>
+</script>
+
+<script type="text/html" data-help-name="hibira push">
+  <p>Sends a push notification to iOS, Android and web devices through Hibira Push (Beams-compatible). The app config needs the Push instance ID and secret key.</p>
+  <h3>Inputs</h3>
+  <dl class="message-properties">
+    <dt class="optional">payload <span class="property-type">string | object</span></dt>
+    <dd>Text for the notification body, or a full publish body with <code>apns</code>, <code>fcm</code> and/or <code>web</code> keys.</dd>
+    <dt class="optional">topic <span class="property-type">string</span></dt>
+    <dd>Interests or user IDs, separated by commas, when the node has none set.</dd>
+    <dt class="optional">title <span class="property-type">string</span></dt>
+    <dd>The notification title.</dd>
+    <dt class="optional">data <span class="property-type">object</span></dt>
+    <dd>Extra data delivered to the app.</dd>
+  </dl>
+  <h3>Outputs</h3>
+  <p><code>msg.payload</code> is the API's answer, with the publish ID.</p>
+</script>

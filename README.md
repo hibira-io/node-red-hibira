@@ -1,6 +1,6 @@
 # @hibira-io/node-red-hibira
 
-![@hibira-io/node-red-hibira](.github/cover.jpg)
+![@hibira-io/node-red-hibira](https://raw.githubusercontent.com/hibira-io/node-red-hibira/main/.github/cover.jpg)
 
 [Node-RED](https://nodered.org) nodes for [Hibira](https://hibira.io), a hosted realtime service that speaks the Pusher Channels and Beams protocols.
 

@@ -1,5 +1,7 @@
 # @hibira-io/node-red-hibira
 
+![@hibira-io/node-red-hibira](.github/cover.jpg)
+
 [Node-RED](https://nodered.org) nodes for [Hibira](https://hibira.io), a hosted realtime service that speaks the Pusher Channels and Beams protocols.
 
 Push sensor readings, order updates or alerts from a flow to every open browser, dashboard and app at once. You can also react in Node-RED to events your web pages send.

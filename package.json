@@ -1,6 +1,6 @@
 {
   "name": "@hibira-io/node-red-hibira",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Node-RED nodes for Hibira: send and receive realtime WebSocket events (Pusher-compatible) and push notifications",
   "homepage": "https://hibira.io",
   "repository": {

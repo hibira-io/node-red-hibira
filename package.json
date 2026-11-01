@@ -1,7 +1,7 @@
 {
   "name": "@hibira-io/node-red-hibira",
-  "version": "0.1.2",
-  "description": "Node-RED nodes for Hibira: send and receive realtime WebSocket events (Pusher-compatible) and push notifications",
+  "version": "0.2.0",
+  "description": "Node-RED nodes for Hibira: send and receive realtime WebSocket events (Pusher-compatible), push notifications and approval requests",
   "homepage": "https://hibira.io",
   "repository": {
     "type": "git",
@@ -27,7 +27,8 @@
       "hibira-config": "nodes/hibira-config.js",
       "hibira-out": "nodes/hibira-out.js",
       "hibira-in": "nodes/hibira-in.js",
-      "hibira-push": "nodes/hibira-push.js"
+      "hibira-push": "nodes/hibira-push.js",
+      "hibira-approval": "nodes/hibira-approval.js"
     }
   },
   "files": [

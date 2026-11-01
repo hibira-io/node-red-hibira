@@ -10,6 +10,7 @@ const configNode = require('../nodes/hibira-config.js');
 const outNode = require('../nodes/hibira-out.js');
 const inNode = require('../nodes/hibira-in.js');
 const pushNode = require('../nodes/hibira-push.js');
+const approvalNode = require('../nodes/hibira-approval.js');
 
 helper.init(require.resolve('node-red'));
 
@@ -108,6 +109,85 @@ describe('hibira nodes', function () {
       assert.deepStrictEqual(seen.body.interests, ['news']);
       assert.deepStrictEqual(seen.body.web.notification, { title: 'Hello', body: 'Your order shipped', deep_link: 'https://example.com/o/42' });
       assert.deepStrictEqual(seen.body.apns.aps.alert, { title: 'Hello', body: 'Your order shipped' });
+    } finally {
+      server.close();
+    }
+  });
+
+  it('requests an approval, waits for the answer and routes it to the approved output', async () => {
+    const seen = [];
+    let polls = 0;
+    const server = http.createServer((req, res) => {
+      let body = '';
+      req.on('data', (c) => (body += c));
+      req.on('end', () => {
+        const u = new URL(req.url, 'http://x');
+        seen.push({ method: req.method, path: u.pathname, query: u.searchParams, body: body && JSON.parse(body) });
+        res.setHeader('Content-Type', 'application/json');
+        if (req.method === 'POST') {
+          res.statusCode = 201;
+          res.end('{"approval_id":"apr_1","status":"pending","url":"https://hibira.io/approve/apr_1/t"}');
+        } else {
+          polls++;
+          res.end(polls < 2 ? '{"approval_id":"apr_1","status":"pending"}' : '{"approval_id":"apr_1","status":"approved","choice":"Ship"}');
+        }
+      });
+    });
+    await new Promise((r) => server.listen(0, '127.0.0.1', r));
+    const host = 'http://127.0.0.1:' + server.address().port;
+    try {
+      await helper.load(
+        [configNode, approvalNode],
+        [
+          { id: 'app', type: 'hibira-config', host },
+          { id: 'ask', type: 'hibira approval', app: 'app', options: 'Ship, Hold', wait: true, waitMinutes: 5, pushTarget: 'users', push: 'u1', wires: [['yes'], ['no']] },
+          { id: 'yes', type: 'helper' },
+          { id: 'no', type: 'helper' },
+        ],
+        { app: { appId: '7', key: 'k', secret: 's' } },
+      );
+      let rejected = false;
+      helper.getNode('no').on('input', () => (rejected = true));
+      const yes = new Promise((resolve) => helper.getNode('yes').on('input', resolve));
+      helper.getNode('ask').receive({ payload: 'Ship release 1.2?' });
+      const msg = await yes;
+      assert.strictEqual(rejected, false);
+      assert.strictEqual(msg.approved, true);
+      assert.deepStrictEqual(msg.payload, { approval_id: 'apr_1', status: 'approved', choice: 'Ship', url: 'https://hibira.io/approve/apr_1/t' });
+      assert.strictEqual(seen[0].path, '/apps/7/approvals');
+      assert.deepStrictEqual(seen[0].body, { title: 'Ship release 1.2?', agent: 'Node-RED', options: ['Ship', 'Hold'], push_users: ['u1'] });
+      assert.ok(seen[0].query.get('auth_signature') && seen[0].query.get('body_md5'));
+      assert.strictEqual(seen[1].path, '/apps/7/approvals/apr_1');
+      assert.strictEqual(seen[1].query.get('wait'), '25');
+    } finally {
+      server.close();
+    }
+  });
+
+  it('sends a request without waiting to the second output', async () => {
+    const server = http.createServer((req, res) => {
+      req.resume();
+      req.on('end', () => {
+        res.statusCode = 201;
+        res.end('{"approval_id":"apr_2","status":"pending","url":"u"}');
+      });
+    });
+    await new Promise((r) => server.listen(0, '127.0.0.1', r));
+    try {
+      await helper.load(
+        [configNode, approvalNode],
+        [
+          { id: 'app', type: 'hibira-config', host: 'http://127.0.0.1:' + server.address().port },
+          { id: 'ask', type: 'hibira approval', app: 'app', title: 'Go?', wait: false, wires: [[], ['no']] },
+          { id: 'no', type: 'helper' },
+        ],
+        { app: { appId: '7', key: 'k', secret: 's' } },
+      );
+      const no = new Promise((resolve) => helper.getNode('no').on('input', resolve));
+      helper.getNode('ask').receive({});
+      const msg = await no;
+      assert.strictEqual(msg.approved, false);
+      assert.strictEqual(msg.payload.url, 'u');
     } finally {
       server.close();
     }

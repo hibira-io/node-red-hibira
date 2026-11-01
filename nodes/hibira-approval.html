@@ -1,0 +1,98 @@
+<script type="text/javascript">
+  RED.nodes.registerType('hibira approval', {
+    category: 'network',
+    color: '#F5A28A',
+    defaults: {
+      name: { value: '' },
+      app: { value: '', type: 'hibira-config', required: true },
+      title: { value: '' },
+      options: { value: 'Approve, Reject' },
+      details: { value: '' },
+      wait: { value: true },
+      waitMinutes: { value: 60, validate: RED.validators.number() },
+      expires: { value: '' },
+      channel: { value: '' },
+      pushTarget: { value: 'interests' },
+      push: { value: '' },
+      agent: { value: 'Node-RED' },
+    },
+    inputs: 1,
+    outputs: 2,
+    outputLabels: ['approved', 'rejected, expired or not answered yet'],
+    icon: 'font-awesome/fa-check-square-o',
+    label: function () {
+      return this.name || this.title || 'hibira approval';
+    },
+    paletteLabel: 'hibira approval',
+  });
+</script>
+
+<script type="text/html" data-template-name="hibira approval">
+  <div class="form-row">
+    <label for="node-input-app"><i class="fa fa-cloud"></i> App</label>
+    <input type="text" id="node-input-app" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-title">Question</label>
+    <input type="text" id="node-input-title" placeholder="Refund order #1042? (or msg.title)" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-options">Choices</label>
+    <input type="text" id="node-input-options" placeholder="Approve, Reject (the first approves)" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-details">Details</label>
+    <input type="text" id="node-input-details" placeholder="or msg.details" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-wait">Wait</label>
+    <input type="checkbox" id="node-input-wait" style="width:auto" /> for the answer, up to
+    <input type="text" id="node-input-waitMinutes" style="width:60px" /> minutes
+  </div>
+  <div class="form-row">
+    <label for="node-input-expires">Expires</label>
+    <input type="text" id="node-input-expires" style="width:80px" placeholder="60" /> minutes (at most 10080)
+  </div>
+  <div class="form-row">
+    <label for="node-input-channel">Channel</label>
+    <input type="text" id="node-input-channel" placeholder="private-hibira-approvals.ops (optional)" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-pushTarget">Push link to</label>
+    <select id="node-input-pushTarget" style="width:110px">
+      <option value="interests">Interests</option>
+      <option value="users">Users</option>
+    </select>
+    <input type="text" id="node-input-push" style="width:calc(70% - 120px)" placeholder="ops (optional, or msg.topic)" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-agent">Requester</label>
+    <input type="text" id="node-input-agent" placeholder="Node-RED" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+    <input type="text" id="node-input-name" />
+  </div>
+</script>
+
+<script type="text/html" data-help-name="hibira approval">
+  <p>Asks a person to approve or choose through a Hibira-hosted answer link, then waits for the answer (human in the loop). Needs an app in a Hibira account.</p>
+  <p>Send the link from <code>msg.payload.url</code> by email or chat, or let Hibira deliver it with <b>Push link to</b> (the app needs Push) or announce it on a <b>Channel</b> for the <code>@hibira-io/approvals</code> inbox. Anyone with the link can answer once; the first choice approves, any other rejects.</p>
+  <h3>Inputs</h3>
+  <dl class="message-properties">
+    <dt class="optional">title <span class="property-type">string</span></dt>
+    <dd>The question, when the node has none (or <code>msg.payload</code> as text).</dd>
+    <dt class="optional">options <span class="property-type">array | string</span></dt>
+    <dd>2 to 4 choices.</dd>
+    <dt class="optional">details <span class="property-type">string</span></dt>
+    <dd>Context shown to the person.</dd>
+    <dt class="optional">topic <span class="property-type">string</span></dt>
+    <dd>Push interests or user IDs, separated by commas.</dd>
+  </dl>
+  <h3>Outputs</h3>
+  <ol class="node-ports">
+    <li>Approved: the first choice was picked.</li>
+    <li>Anything else: rejected, expired, still pending when the wait ran out, or right away when <b>Wait</b> is off.</li>
+  </ol>
+  <p><code>msg.payload</code> is the request: <code>approval_id</code>, <code>status</code> (<code>approved</code>, <code>rejected</code>, <code>expired</code>, <code>pending</code>), <code>choice</code>, <code>comment</code> and <code>url</code>. <code>msg.approved</code> is true when approved.</p>
+</script>
